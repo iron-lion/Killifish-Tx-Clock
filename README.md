@@ -59,40 +59,38 @@ python src/plot_pcr_query.py
 `run_query_clocks.py` loops over tissues and executes the following steps:
 
 ```
-┌─────────────────────────────────────────────────────────────────┐
-│  Atlas (train)                   Query (test)                   │
-│                                                                  │
-│  DataLoader                      QueryCountExtractor            │
-│  └─ raw counts + metadata        └─ parse xlsx DE result files  │
-│     filter_genes (min_count=1)      GeneMapper (ENSNFUG→Atlas)  │
-│     Preprocessor.stratify()         extract per-tissue counts   │
-│           │                                    │                 │
-│           └──────── ComBat-seq batch correction ────────────────┘
-│                     (inmoose.pycombat_seq, ref=Atlas)
-│                                    │
-│              batch-corrected query counts
-│                       ┌────────────┤
-│                       │            │
-│              ┌────────┘            └───────────────┐
-│              ▼                                     ▼
-│   FrequencyNormalize(Atlas raw)       Atlas DESeq2-normalized
-│              │                        (pre-saved from step 1)
-│              ▼                                     │
-│   BayesAge2Clock                       ┌───────────┴──────────┐
-│   .build_reference(Atlas)              ▼                       ▼
-│   .predict(query, M=25..200)    PCRClock                ElasticNetClock
-│              │                  .loso_cv(Atlas)         .tune_and_train(Atlas)
-│              │                  .fit(Atlas)             .loso_cv(Atlas)
-│              │                  .predict(query)         .predict(query)
-│              │                  + Mann-Whitney U        (currently disabled)
-│              │                  per n_components
-│              ▼                          ▼                       ▼
-│   outputs/bayesage2/            outputs/pcr/           outputs/elastic_net/
-│   *_BayesAge2_query.csv         *_PCR_query.csv        *_EN_query_loso.csv
-│   *_BayesAge2_feature_          *_PCR_mw_pvals.csv     *_EN_feature_
-│     importance.csv              *_PCR_feature_           importance.csv
-│                                   importance_n*.csv
-└─────────────────────────────────────────────────────────────────┘
+  Atlas (train)                   Query (test)                   
+                                                                 
+  DataLoader                      QueryCountExtractor            
+  └─ raw counts + metadata        └─ parse xlsx/csv files  
+     filter_genes (min_count=1)      GeneMapper (ENSNFUG→Atlas)  
+     Preprocessor.stratify()         extract per-tissue counts   
+           │                                    │                 
+           └──── ComBat-seq batch correction ───┘
+                     (inmoose.pycombat_seq, ref=Atlas)
+                                    │
+              batch-corrected query counts
+                       ┌────────────┤
+                       │            │
+              ┌────────┘            └───────────────┐
+              ▼                                     ▼
+   FrequencyNormalize(Atlas raw)       Atlas DESeq2-normalized
+              │                        (pre-saved from step 1)
+              ▼                                     │
+   BayesAge2Clock                       ┌───────────┴──────────┐
+   .build_reference(Atlas)              ▼                       ▼
+   .predict(query, M=25..200)    PCRClock                ElasticNetClock
+              │                  .loso_cv(Atlas)         .tune_and_train(Atlas)
+              │                  .fit(Atlas)             .loso_cv(Atlas)
+              │                  .predict(query)         .predict(query)
+              │                  + Mann-Whitney U        (currently disabled)
+              │                  per n_components
+              ▼                          ▼                       ▼
+   outputs/bayesage2/            outputs/pcr/           outputs/elastic_net/
+   *_BayesAge2_query.csv         *_PCR_query.csv        *_EN_query_loso.csv
+   *_BayesAge2_feature_          *_PCR_mw_pvals.csv     *_EN_feature_
+     importance.csv              *_PCR_feature_           importance.csv
+                                   importance_n*.csv
 ```
 
 ### Output Files
