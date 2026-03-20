@@ -47,7 +47,7 @@ python src/normalize_reference.py
 
 # 2. Apply clocks to query data
 #    Check query_data/toy.csv
-python run_query_clocks.py
+python run_query_clocks.py --counts query_data/toy.csv
 
 # 3. Plot results
 python src/plot_pcr_query.py
