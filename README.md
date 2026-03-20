@@ -45,7 +45,8 @@ conda activate killifish-tx-clock
 # 1. Normalize the full Atlas reference (run once)
 python src/normalize_reference.py
 
-# 2. Apply clocks to query data 
+# 2. Apply clocks to query data
+#    Check query_data/toy.csv
 python run_query_clocks.py
 
 # 3. Plot results
@@ -59,12 +60,12 @@ python src/plot_pcr_query.py
 `run_query_clocks.py` loops over tissues and executes the following steps:
 
 ```
-  Atlas (train)                   Query (test)                   
-                                                                 
-  DataLoader                      QueryCountExtractor            
-  └─ raw counts + metadata        └─ parse xlsx/csv files  
-     filter_genes (min_count=1)      GeneMapper (ENSNFUG→Atlas)  
-     Preprocessor.stratify()         extract per-tissue counts   
+  Atlas (train)                       Query (test)          
+                                                            
+  DataLoader                          QueryCountExtractor
+  └─ raw counts + metadata            └─ parse xlsx/csv files  
+     filter_genes (min_count=1)          GeneMapper (ENSNFUG→Atlas)
+     Preprocessor.stratify()             extract per-tissue counts 
            │                                    │                 
            └──── ComBat-seq batch correction ───┘
                      (inmoose.pycombat_seq, ref=Atlas)

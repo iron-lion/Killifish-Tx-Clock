@@ -32,7 +32,6 @@ QUERY_DIR = REPO_ROOT / "query_data"
 # ── USER-CONFIGURABLE ──────────────────────────────────────────────────────
 YOUNG_AGE_DAYS: int = 56     # ~8 weeks 
 OLD_AGE_DAYS: int = 126      # ~18 weeks
-CONTROL_CONDITION: str = ""  # NOTE: untreated control
 # ──────────────────────────────────────────────────────────────────────────
 
 _TISSUE_MAP = {"FAT": "Fat", "LIVER": "Liver", "MUSCLE": "Muscle"}

@@ -90,7 +90,8 @@ Total: **12,482 / 23,991 query genes mapped (52%)**
 ---
 
 ## `calibration.py` — `QueryCountExtractor`, `CalibrationManager`
-Applies trained Atlas clocks to query datasets.
+Applies trained Atlas clocks to AAlab query datasets.
+NOTE: AAlab specific
 
 **`QueryCountExtractor`**
 - Parses per-tissue count columns from query xlsx files (DESeq2-normalized values)
@@ -103,8 +104,6 @@ Applies trained Atlas clocks to query datasets.
 - `run_bayesage2(atlas_raw, atlas_meta, query_counts, query_meta)` — builds reference on Atlas; predicts query samples at M=5..200
 - `run_pcr(atlas_norm, atlas_meta, query_norm, query_meta)` — fits Pipeline on Atlas; predicts query; computes Mann-Whitney U (Young vs Old) per n_components
 - `run_en(atlas_norm, atlas_meta, query_norm, query_meta)` — tunes/trains EN on Atlas; runs LOSO-CV; predicts query
-
-> **Note:** Verify `YOUNG_AGE_DAYS`, `OLD_AGE_DAYS`, and `CONTROL_CONDITION` constants in `calibration.py` before running against your experiment.
 
 ---
 
