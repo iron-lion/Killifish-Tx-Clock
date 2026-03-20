@@ -39,16 +39,73 @@ conda activate killifish-tx-clock
 ---
 
 
+## Running the Pipeline
+
+```bash
+# 1. Normalize the full Atlas reference (run once)
+python src/normalize_reference.py
+
+# 2. Apply clocks to query data 
+python run_query_clocks.py
+
+# 3. Plot results
+python src/plot_pcr_query.py
+```
+
+---
+
 ## Pipeline Overview
 
+`run_query_clocks.py` loops over tissues and executes the following steps:
+
 ```
-Atlas raw counts + metadata
-        │
-        ├─ FrequencyNormalizer ──► BayesAge2Clock.build_reference() ──► predict(query)
-        │ 
-        │
-        └─ DESeq2Normalizer ─────► ElasticNetClock.tune_and_train()  ──► predict(query)
-                                   PCRClock.loso_cv() → fit()         ──► predict(query)
+┌─────────────────────────────────────────────────────────────────┐
+│  Atlas (train)                   Query (test)                   │
+│                                                                  │
+│  DataLoader                      QueryCountExtractor            │
+│  └─ raw counts + metadata        └─ parse xlsx DE result files  │
+│     filter_genes (min_count=1)      GeneMapper (ENSNFUG→Atlas)  │
+│     Preprocessor.stratify()         extract per-tissue counts   │
+│           │                                    │                 │
+│           └──────── ComBat-seq batch correction ────────────────┘
+│                     (inmoose.pycombat_seq, ref=Atlas)
+│                                    │
+│              batch-corrected query counts
+│                       ┌────────────┤
+│                       │            │
+│              ┌────────┘            └───────────────┐
+│              ▼                                     ▼
+│   FrequencyNormalize(Atlas raw)       Atlas DESeq2-normalized
+│              │                        (pre-saved from step 1)
+│              ▼                                     │
+│   BayesAge2Clock                       ┌───────────┴──────────┐
+│   .build_reference(Atlas)              ▼                       ▼
+│   .predict(query, M=25..200)    PCRClock                ElasticNetClock
+│              │                  .loso_cv(Atlas)         .tune_and_train(Atlas)
+│              │                  .fit(Atlas)             .loso_cv(Atlas)
+│              │                  .predict(query)         .predict(query)
+│              │                  + Mann-Whitney U        (currently disabled)
+│              │                  per n_components
+│              ▼                          ▼                       ▼
+│   outputs/bayesage2/            outputs/pcr/           outputs/elastic_net/
+│   *_BayesAge2_query.csv         *_PCR_query.csv        *_EN_query_loso.csv
+│   *_BayesAge2_feature_          *_PCR_mw_pvals.csv     *_EN_feature_
+│     importance.csv              *_PCR_feature_           importance.csv
+│                                   importance_n*.csv
+└─────────────────────────────────────────────────────────────────┘
 ```
+
+### Output Files
+
+| Directory | File pattern | Contents |
+|---|---|---|
+| `outputs/bayesage2/` | `{tissue}_sexcombined_BayesAge2_query.csv` | tAge predictions at each M value |
+| `outputs/bayesage2/` | `{tissue}_sexcombined_BayesAge2_feature_importance.csv` | Genes ranked by \|Spearman r\| |
+| `outputs/pcr/` | `{tissue}_sexcombined_PCR_query.csv` | tAge predictions per n_components |
+| `outputs/pcr/` | `{tissue}_sexcombined_PCR_query_mw_pvals.csv` | Mann-Whitney U p-values (Young vs Old) |
+| `outputs/pcr/` | `{tissue}_sexcombined_PCR_feature_importance_n{n}.csv` | Gene importance per n_components |
+| `outputs/elastic_net/` | `{tissue}_sexcombined_EN_query_loso.csv` | Atlas LOSO-CV + query predictions |
+| `outputs/elastic_net/` | `{tissue}_sexcombined_EN_feature_importance.csv` | Non-zero EN coefficients |
+| `outputs/figures/` | `{tissue}_combined_{Model}_query_{param}.svg` | Scatter-box plots per tissue/model |
 
 ---
