@@ -30,6 +30,7 @@ environment.yml             # Conda environment definition
 ---
 
 ## Setup
+Download KilifishAtlas data from [GEO PRJNA1274512](https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE308970)
 
 ```bash
 conda env create -f environment.yml
@@ -108,3 +109,6 @@ python src/plot_pcr_query.py
 | `outputs/figures/` | `{tissue}_combined_{Model}_query_{param}.svg` | Scatter-box plots per tissue/model |
 
 ---
+
+## Note
+The refactoring has been done with the assistance of CLAUDE.
