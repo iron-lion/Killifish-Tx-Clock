@@ -1,6 +1,6 @@
 # Killifish Transcriptome Aging Clock
 
-An Python adaptation of the KillifishAtlas aging clock pipeline for [AAlab](https://www.age.mpg.de/antebi).
+Python adaptation of the KillifishAtlas aging clock pipeline for [AAlab](https://www.age.mpg.de/antebi).
 Applies three transcriptomic aging clocks — **BayesAge 2.0**, **Elastic Net (EN)**, and **Principal
 Component Regression (PCR)** — to *Nothobranchius furzeri* RNA-seq data and predicts transcriptomic
 age (tAge) in query samples.
