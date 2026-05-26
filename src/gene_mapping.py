@@ -10,18 +10,18 @@ Background
     2. BioMart fallback: Ensembl ENSNFUG → external_gene_name → Atlas (for unmatched named genes)
     3. LOC: NCBI gene2ensembl ENSNFUG → GeneID 107XXXXXX → 'LOC107XXXXXX' in Atlas
 
-Pre-built mapping file: data_matrices/query_to_atlas_gene_mapping.csv
-To rebuild: python gene_mapping.py  (or GeneMapper.build_and_save(...))
+Pre-built mapping file: data/gene_id_map.csv
+To rebuild: python data/build_gene_map.py
 """
 
 import pandas as pd
 from pathlib import Path
 
 REPO_ROOT = Path(__file__).resolve().parent.parent
-MAPPING_FILE = REPO_ROOT / "data_matrices" / "query_to_atlas_gene_mapping.csv"
+MAPPING_FILE = REPO_ROOT / "data" / "gene_id_map.csv"
 QUERY_DIR = REPO_ROOT / "query_data"
-ATLAS_COUNTS_FILE = REPO_ROOT / "data_matrices" / "GSE308970_Counts_Atlas_allbatches_merged_v3.csv"
-GENE2ENSEMBL_FILE = REPO_ROOT / "data_matrices" / "ncbi_gene2ensembl_nfurzeri.csv"
+ATLAS_COUNTS_FILE = REPO_ROOT / "data" / "GSE308970_Counts_Atlas_allbatches_merged_v3.csv"
+GENE2ENSEMBL_FILE = REPO_ROOT / "data" / "ncbi_gene2ensembl_nfurzeri.csv"
 
 
 class GeneMapper:
@@ -35,7 +35,9 @@ class GeneMapper:
     """
 
     def __init__(self, mapping_file: Path = MAPPING_FILE):
-        df = pd.read_csv(mapping_file)
+        df = pd.read_csv(mapping_file, usecols=["ensembl_gene_id", "atlas_gene"])
+        df = df.dropna(subset=["ensembl_gene_id", "atlas_gene"])
+        df = df.drop_duplicates(subset="ensembl_gene_id", keep="first")
         self._map = df.set_index("ensembl_gene_id")["atlas_gene"]
 
     # ------------------------------------------------------------------

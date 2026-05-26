@@ -10,13 +10,13 @@ Produces two output files in outputs/normalized/:
 import sys
 from pathlib import Path
 
-sys.path.insert(0, str(Path(__file__).resolve().parent / 'src'))
+sys.path.insert(0, str(Path(__file__).resolve().parents[1] / 'src'))
 
 from data_loader import DataLoader
 from normalization import FrequencyNormalizer, DESeq2Normalizer
 from preprocessing import Preprocessor
 
-OUT_DIR = Path(__file__).resolve().parent / "outputs" / "normalized"
+OUT_DIR = Path(__file__).resolve().parents[1] / "outputs" / "normalized"
 OUT_DIR.mkdir(parents=True, exist_ok=True)
 
 FREQ_OUT = OUT_DIR / "Atlas_freq_normalized.csv"

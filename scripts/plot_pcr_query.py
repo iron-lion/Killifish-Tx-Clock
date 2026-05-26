@@ -27,7 +27,7 @@ from pathlib import Path
 TISSUES = [] #NOTE
 MODELS  = ["BayesAge2", "PCR", "EN"]
 
-OUT_BASE = Path(__file__).resolve().parent / "outputs"
+OUT_BASE = Path(__file__).resolve().parents[1] / "outputs"
 FIG_DIR  = OUT_BASE / "figures"
 
 CONDITION_ORDER  = [] #NOTE

@@ -25,7 +25,7 @@ Clocks
 Prerequisite
 ------------
 Run once before PCR / EN:
-    python src/normalize_reference.py
+    python scripts/normalize_reference.py
 
 Usage examples
 --------------
@@ -68,7 +68,7 @@ import numpy as np
 import pandas as pd
 
 warnings.filterwarnings("ignore")
-sys.path.insert(0, str(Path(__file__).resolve().parent / "src"))
+sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "src"))
 
 from bayesage2 import BayesAge2Clock
 from data_loader import DataLoader
@@ -78,7 +78,7 @@ from pcr import PCRClock
 from preprocessing import Preprocessor
 
 # ── Defaults ──────────────────────────────────────────────────────────────────
-_REPO_ROOT       = Path(__file__).resolve().parent
+_REPO_ROOT       = Path(__file__).resolve().parents[1]
 _NORM_DIR        = _REPO_ROOT / "outputs" / "normalized"
 _ATLAS_NORM_FILE = _NORM_DIR / "Atlas_DESeq2_normalized.csv"
 _DEFAULT_OUT     = _REPO_ROOT / "outputs"

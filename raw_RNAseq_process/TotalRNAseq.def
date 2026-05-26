@@ -1,0 +1,52 @@
+Bootstrap: docker
+From: ubuntu:24.04
+
+%labels
+    Author Youngjun Park
+    Version v1.1
+    Description "Total RNA-seq: GEO download → STAR alignment → count matrix"
+
+%post
+    export DEBIAN_FRONTEND=noninteractive
+    apt-get update && apt-get install -y \
+        wget curl python3 python3-pip \
+        xxd libncurses-dev \
+        bzip2 libbz2-dev liblzma-dev zlib1g-dev \
+        build-essential
+
+    # fastp
+    mkdir -p /opt/fastp
+    wget -q -O /opt/fastp/fastp http://opengene.org/fastp/fastp
+    chmod +x /opt/fastp/fastp
+
+    # STAR 2.7.11b
+    mkdir -p /opt/star
+    cd /opt/star
+    wget -q https://github.com/alexdobin/STAR/archive/2.7.11b.tar.gz
+    tar -xzf 2.7.11b.tar.gz
+    cd STAR-2.7.11b/source
+    make STAR
+
+    # samtools 1.22.1
+    mkdir -p /opt/samtools
+    cd /opt/samtools
+    wget -q https://github.com/samtools/samtools/releases/download/1.22.1/samtools-1.22.1.tar.bz2
+    tar -xjf samtools-1.22.1.tar.bz2
+    cd samtools-1.22.1
+    ./configure --prefix=/opt/samtools
+    make && make install
+
+    # Ubuntu 24.04 uses PEP 668 (externally-managed env) — --break-system-packages required
+    pip install --quiet --break-system-packages pandas
+
+    mkdir -p /opt/rnaseq
+
+%environment
+    export PATH=/opt/star/STAR-2.7.11b/bin/Linux_x86_64:$PATH
+    export PATH=/opt/samtools/bin:$PATH
+    export PATH=/opt/fastp:$PATH
+    export PATH=/opt/rnaseq:$PATH
+
+%runscript
+    echo "Total RNA-seq pipeline container"
+    echo "Tools: fastp, STAR 2.7.11b, samtools 1.22.1, pandas"

@@ -1,0 +1,75 @@
+site_name: Killifish Transcriptome Aging Clock
+site_description: >-
+  BayesAge 2.0, Elastic Net, and PCR transcriptomic aging clocks for
+  Nothobranchius furzeri RNA-seq data.
+site_author: Youngjun Park
+repo_url: https://github.com/iron-lion/Killifish-Tx-Clock
+repo_name: iron-lion/Killifish-Tx-Clock
+
+theme:
+  name: material
+  palette:
+    - scheme: default
+      primary: teal
+      accent: cyan
+      toggle:
+        icon: material/brightness-7
+        name: Switch to dark mode
+    - scheme: slate
+      primary: teal
+      accent: cyan
+      toggle:
+        icon: material/brightness-4
+        name: Switch to light mode
+  features:
+    - navigation.tabs
+    - navigation.tabs.sticky
+    - navigation.sections
+    - navigation.expand
+    - navigation.top
+    - search.suggest
+    - search.highlight
+    - content.code.copy
+    - content.code.annotate
+  icon:
+    repo: fontawesome/brands/github
+
+markdown_extensions:
+  - admonition
+  - pymdownx.details
+  - pymdownx.superfences
+  - pymdownx.highlight:
+      anchor_linenums: true
+  - pymdownx.inlinehilite
+  - pymdownx.tabbed:
+      alternate_style: true
+  - tables
+  - toc:
+      permalink: true
+
+nav:
+  - Home:
+      - Home: index.md
+      - Setup: setup.md
+      - Pipeline Overview: pipeline.md
+  - APIs:
+      - Run Scripts: scripts/run_query_clocks.md
+      - Implementation details:
+        - Overview: api/index.md
+        - data_loader: api/data_loader.md
+        - normalization: api/normalization.md
+        - preprocessing: api/preprocessing.md
+        - bayesage2: api/bayesage2.md
+        - elastic_net: api/elastic_net.md
+        - pcr: api/pcr.md
+        - gene_mapping: api/gene_mapping.md
+        - calibration: api/calibration.md
+      - Plotting:
+        - Gene_expression: visualization/gene_expression.md
+  - Data:
+      - Files: data/data_files.md
+      - Gene ID Mapping: data/gene_mapping.md
+      - RNA-seq Preprocessor:
+        - Pipeline: raw_rnaseq/pipeline.md
+        - GEO Download: raw_rnaseq/geo_download.md
+  - Change Log: log.md

@@ -85,7 +85,7 @@ Three-layer mapping strategy:
 Total: **12,482 / 23,991 query genes mapped (52%)**
 
 - `convert(counts)` — maps ENSNFUG index to Atlas gene names; drops unmapped genes
-- `build_and_save(...)` — rebuilds mapping from scratch (requires internet for BioMart); saves to `data_matrices/query_to_atlas_gene_mapping.csv`
+- `build_and_save(...)` — rebuilds mapping from scratch (requires internet for BioMart); saves to `data/gene_id_map.csv`
 
 ---
 

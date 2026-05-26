@@ -37,18 +37,19 @@ class BayesAge2Clock:
         Candidate ages (in days) to evaluate during prediction.
         Default: 47–163 days at 1-day resolution.
     lowess_frac : float
-        LOWESS smoothing fraction (frac parameter).
+        LOWESS smoothing fraction. 0.7 matches the original Costa et al.
+        implementation; lower values produce less-smooth age curves.
     lowess_top_n : int
         Only compute LOWESS for the top N genes by |Spearman r|.
-        Reduces computation without affecting predictions (predictions
-        already select the top M << lowess_top_n genes).
+        Must exceed the largest M used at prediction time (default M_max=200
+        in run scripts, so 500 provides comfortable headroom).
     """
 
     def __init__(
         self,
         age_range: np.ndarray = AGE_RANGE,
-        lowess_frac: float = 0.3,
-        lowess_top_n: int = 250,
+        lowess_frac: float = 0.7,
+        lowess_top_n: int = 500,
     ):
         self.age_range = np.array(age_range)
         self.lowess_frac = lowess_frac

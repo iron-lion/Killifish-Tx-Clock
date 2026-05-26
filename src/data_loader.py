@@ -10,7 +10,7 @@ from pathlib import Path
 # Repository root = one level up from this file
 REPO_ROOT = Path(__file__).resolve().parent.parent
 
-DATA_DIR = REPO_ROOT / "data_matrices"
+DATA_DIR = REPO_ROOT / "data"
 QUERY_DIR = REPO_ROOT / "query_data"
 
 
