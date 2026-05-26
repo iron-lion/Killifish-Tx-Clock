@@ -71,5 +71,4 @@ nav:
       - Gene ID Mapping: data/gene_mapping.md
       - RNA-seq Preprocessor:
         - Pipeline: raw_rnaseq/pipeline.md
-        - GEO Download: raw_rnaseq/geo_download.md
   - Change Log: log.md
