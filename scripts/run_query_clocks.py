@@ -74,6 +74,7 @@ from bayesage2 import BayesAge2Clock
 from data_loader import DataLoader
 from elastic_net import ElasticNetClock
 from gene_mapping import GeneMapper
+from normalization import FrequencyNormalizer
 from pcr import PCRClock
 from preprocessing import Preprocessor
 
@@ -234,20 +235,28 @@ def run_pcr(
     t0 = time.time()
 
     shared = atlas_norm.index.intersection(query_counts.index)
+    _fn = FrequencyNormalizer()
+    atlas_freq = np.log1p(_fn.normalize(atlas_norm.loc[shared]) * 1e6)
+    query_freq = np.log1p(_fn.normalize(query_counts.loc[shared]) * 1e6)
 
     clock = PCRClock(
         n_components_range=n_components,
         top_n_var_genes=top_n_var,
     )
-    clock.loso_cv(atlas_norm.loc[shared], atlas_meta)
-    clock.fit(atlas_norm.loc[shared], atlas_meta)
+    clock.loso_cv(atlas_freq, atlas_meta)
 
-    preds = clock.predict(query_counts)   # PCRClock.predict filters genes internally
-    result = preds.to_frame(name=f"predicted_age_n{clock.optimal_n_components}")
+    # Predict query at every n_components, save as wide DataFrame
+    records = {}
+    for n in n_components:
+        clock.fit(atlas_freq, atlas_meta, n_components=n)
+        records[f"predicted_age_n{n}"] = clock.predict(query_freq)
+
+    result = pd.DataFrame(records)
     result.index.name = "sample_id"
     result.to_csv(out_dir / f"{tissue}_PCR_predictions.csv")
 
-    # Save CV metrics, loadings, feature importance
+    # Re-fit with optimal n for save_loadings
+    clock.fit(atlas_freq, atlas_meta)
     clock.save_loadings(out_dir, prefix=tissue)
 
     print(f"  [PCR]       {tissue}  n_query={len(result)}  "
@@ -267,11 +276,14 @@ def run_en(
     t0 = time.time()
 
     shared = atlas_norm.index.intersection(query_counts.index)
+    _fn = FrequencyNormalizer()
+    atlas_freq = np.log1p(_fn.normalize(atlas_norm.loc[shared]) * 1e6)
+    query_freq = np.log1p(_fn.normalize(query_counts.loc[shared]) * 1e6)
 
     clock = ElasticNetClock(tissue=tissue, top_n_var_genes=top_n_var)
-    clock.tune_and_train(atlas_norm.loc[shared], atlas_meta)
+    clock.tune_and_train(atlas_freq, atlas_meta)
 
-    preds = clock.predict(query_counts.loc[shared])
+    preds = clock.predict(query_freq)
     result = preds.to_frame(name="predicted_age")
     result.index.name = "sample_id"
     result.to_csv(out_dir / f"{tissue}_EN_predictions.csv")

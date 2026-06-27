@@ -382,8 +382,8 @@ run_sample() {
         r1="${src%%,*}"; r2="${src##*,}"
         [[ -f "${r1}" ]] || { log_error "[${sample}] R1 not found: ${r1}"; return 1; }
         [[ -f "${r2}" ]] || { log_error "[${sample}] R2 not found: ${r2}"; return 1; }
-        ln -sf "$(realpath "${r1}")" "${TMP_DIR}/${sample}_R1.fastq.gz"
-        ln -sf "$(realpath "${r2}")" "${TMP_DIR}/${sample}_R2.fastq.gz"
+        ln -sfr "$(realpath "${r1}")" "${TMP_DIR}/${sample}_R1.fastq.gz"
+        ln -sfr "$(realpath "${r2}")" "${TMP_DIR}/${sample}_R2.fastq.gz"
         r1="${TMP_DIR}/${sample}_R1.fastq.gz"
         r2="${TMP_DIR}/${sample}_R2.fastq.gz"
     else
@@ -391,7 +391,7 @@ run_sample() {
         [[ "${ENDEDNESS}" == "single" ]] || {
             log_error "[${sample}] single path '${src}' requires -e single"; return 1; }
         [[ -f "${src}" ]] || { log_error "[${sample}] R1 not found: ${src}"; return 1; }
-        ln -sf "$(realpath "${src}")" "${TMP_DIR}/${sample}_R1.fastq.gz"
+        ln -sfr "$(realpath "${src}")" "${TMP_DIR}/${sample}_R1.fastq.gz"
         r1="${TMP_DIR}/${sample}_R1.fastq.gz"
     fi
 

@@ -19,7 +19,7 @@ from scipy.stats import pearsonr
 
 
 # Hyperparameter grids (per method.txt / original Costa et al. notebooks)
-ALPHA_GRID    = [1e-5, 1e-4, 1e-3, 1e-2, 1e-1, 1.0, 10.0, 100.0]
+ALPHA_GRID    = [1e-3, 1e-2, 1e-1, 1.0, 10.0, 100.0]
 L1_RATIO_GRID = list(np.arange(0.0, 1.1, 0.1))
 
 # max_iter per tissue (method.txt: brain uses 30,000; others 10,000)
