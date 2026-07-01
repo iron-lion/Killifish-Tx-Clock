@@ -137,8 +137,11 @@ def make_plot(df: pd.DataFrame, gene_name: str, log_scale: bool, out_path: Path)
     plt.tight_layout()
     out_path.parent.mkdir(parents=True, exist_ok=True)
     fig.savefig(out_path, bbox_inches="tight")
-    print(f"Saved → {out_path}")
     plt.close(fig)
+
+    csv_path = out_path.with_suffix(".csv")
+    df[["tissue", "sex", "age_days", y_col]].to_csv(csv_path)
+    print(f"Saved → {out_path}  +  {csv_path.name}")
 
 
 def make_timecourse_plots(
@@ -208,8 +211,11 @@ def make_timecourse_plots(
         plt.tight_layout()
         out_path = out_dir / f"{gene_name}_{tissue}_timecourse.svg"
         fig.savefig(out_path, bbox_inches="tight")
-        print(f"  Saved → {out_path.name}")
         plt.close(fig)
+
+        csv_path = out_path.with_suffix(".csv")
+        sub[["age_days", "sex", y_col]].to_csv(csv_path)
+        print(f"  Saved → {out_path.name}  +  {csv_path.name}")
 
 
 def main() -> None:
